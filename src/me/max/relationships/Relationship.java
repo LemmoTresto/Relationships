@@ -22,7 +22,6 @@ public class Relationship extends JavaPlugin {
         getLogger().info("Reading/Writing config..");
         try {
             config.addDefault("VERSION", "0.1");
-            config.addDefault("Relationships", "There is no need to touch anything from this config file. Things you're allowed to touch if needed is enableFriendCommands, enableMarriageCommands, enableLoveCommands. Do not touch any of the rest.");
             config.addDefault("enableFriendCommands", true);
             config.addDefault("enableMarriageCommands", true);
             config.addDefault("enableLoveCommands", true);
