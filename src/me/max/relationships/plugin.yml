@@ -1,0 +1,17 @@
+name: Relationships
+version: 0.1
+author: Max
+main: me.max.relationships.Relationship
+commands:
+   relationships:
+      aliases: []
+      description: Main relationships command.
+      usage: Usage /Relationships
+      permission: relationships.main
+      permission-message: You don't have permission to do this. Node relationships.main
+   friend:
+      aliases: []
+      description: Main friend command of relationships
+      usage: Usage /Friend help
+      permission: relationships.friend.main
+      permission-message: You don't have permission to do this. Node relationships.friend.main
