@@ -8,7 +8,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -16,6 +15,7 @@ import java.util.ArrayList;
  * Created by max on 15-4-2017.
  */
 public class RelationshipFriendCommands implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
@@ -37,15 +37,15 @@ public class RelationshipFriendCommands implements CommandExecutor {
                 return true;
             } else if ((sender.hasPermission("relationships.friend.add")) && args[0].equalsIgnoreCase("add"))
                 if (args.length >= 2) {
-                    if (Relationship.getPlugin().getConfig().contains(sender.getName().toString() + "PendingRequests")) {
-                        ArrayList FriendList = (ArrayList) Relationship.getPlugin().getConfig().getList(sender.getName().toString() + "PendingRequests");
+                    FileConfiguration data = YamlConfiguration.loadConfiguration(new File(Relationship.getPlugin().getDataFolder(), "data/" + ((Player) sender).getUniqueId().toString() + ".yml"));
+                    if (data.contains(sender.getName().toString() + "PendingRequests")) {
+                        ArrayList FriendList = (ArrayList) data.getList(sender.getName().toString() + "PendingRequests");
                         if (FriendList.contains(args[1])) {
                             sender.sendMessage(ChatColor.BLUE + "You've already sent a request or are already friends with that person!");
                             return true;
                         } else if (!(FriendList.contains(args[1]))) {
                             FriendList.add(args[1]);
-                            Relationship.getPlugin().getConfig().set(sender.getName().toString() + "PendingRequests", FriendList);
-                            Relationship.getPlugin().saveConfig();
+                            data.set(sender.getName().toString() + "PendingRequests", FriendList);
                             sender.sendMessage(ChatColor.BLUE + "Successfully sent a friend request to " + args[1]);
                             Relationship.getPlugin().saveConfig();
                             return true;
@@ -56,11 +56,10 @@ public class RelationshipFriendCommands implements CommandExecutor {
                     } else {
                         ArrayList FriendList = new ArrayList();
                         FriendList.add(args[1]);
-                        Relationship.getPlugin().getConfig().addDefault(sender.getName().toString() + "PendingRequests", FriendList);
-                        Relationship.getPlugin().getConfig().addDefault(sender.getName().toString() + "PendingSent", "");
-                        Relationship.getPlugin().getConfig().addDefault(sender.getName().toString() + "FriendList", "");
-                        Relationship.getPlugin().getConfig().addDefault(sender.getName().toString() + "UnreadMail", "");
-                        Relationship.getPlugin().getConfig().options().copyDefaults();
+                        data.set(sender.getName().toString() + "PendingRequests", FriendList);
+                        data.set(sender.getName().toString() + "PendingSent", "");
+                        data.set(sender.getName().toString() + "FriendList", "");
+                        data.set(sender.getName().toString() + "UnreadMail", "");
                         Relationship.getPlugin().saveConfig();
                         sender.sendMessage(ChatColor.BLUE + "Succesfully sent a friend request to " + args[1]);
                         return true;
