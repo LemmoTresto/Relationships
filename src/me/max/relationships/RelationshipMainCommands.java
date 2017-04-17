@@ -17,7 +17,8 @@ public class RelationshipMainCommands implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "Console cannot use these commands!");
             return true;
         } else if (sender instanceof Player) {
-            if ((sender.hasPermission("relationships.main")) && (args.length == 0)) {
+            Player p = (Player) sender;
+            if ((p.hasPermission("relationships.main")) && (args.length == 0)) {
                 sender.sendMessage(ChatColor.BLUE + "|-| Relationships plugin v" + Relationship.getPlugin().getConfig().get("VERSION") + " |-|\n" +
                         "This plugin was made by Max|LemmoTresto|MaxiMiniJaniJos|Greyst\n" +
                         "For problems contact me!\n" +
@@ -25,7 +26,7 @@ public class RelationshipMainCommands implements CommandExecutor {
                         "Spigotmc: https://www.spigotmc.org/members/lemmotresto.284186\n" +
                         ChatColor.DARK_AQUA + "Use /relationships help <friend/marriage/love>");
                 return true;
-            } else if ((sender.hasPermission("relationships.help.friend")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("friend"))) {
+            } else if ((p.hasPermission("relationships.help.friend")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("friend"))) {
                 sender.sendMessage(ChatColor.DARK_AQUA + "Relationships Help -|- Friend\n" + ChatColor.BLUE +
                         "/friend help - Shows this message\n" +
                         "/friend add - Sent a request to add someone as a friend\n" +
@@ -34,11 +35,11 @@ public class RelationshipMainCommands implements CommandExecutor {
                         "/friend <accept/decline> Accept or decline a friend request\n" +
                         "/friend mail - Sends an mail to the player for if he is offline");
                 return true;
-            } else if ((sender.hasPermission("relationships.help.marriage")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("marriage"))) {
+            } else if ((p.hasPermission("relationships.help.marriage")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("marriage"))) {
                 sender.sendMessage(ChatColor.DARK_AQUA + "Relationships Help -|- Marriage" +
                         ChatColor.BLUE + "- Empty -");
                 return true;
-            } else if ((sender.hasPermission("relationships.help.love")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("love"))) {
+            } else if ((p.hasPermission("relationships.help.love")) && (args[0].equalsIgnoreCase("help")) && (args[1].equalsIgnoreCase("love"))) {
                 sender.sendMessage(ChatColor.DARK_AQUA + "Relationships Help -|- Love" +
                         ChatColor.BLUE + "- Empty -");
                 return true;
