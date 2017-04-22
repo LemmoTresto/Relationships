@@ -77,11 +77,11 @@ public class Relationship extends JavaPlugin {
 }
 
 /*
-/friend add
-/friend list
+/friend add DONE
+/friend list BUSY
 /friend pending <requests/sent/cancel>
 /friend msg
 /friend mail <list/sent>
-/friend remove
-/friend accept/decline
+/friend remove DONE
+/friend accept/decline DONE
  */

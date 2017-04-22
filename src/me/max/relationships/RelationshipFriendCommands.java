@@ -31,26 +31,25 @@ public class RelationshipFriendCommands implements CommandExecutor {
             File file2 = new File(Relationship.getPlugin().getDataFolder(), "data/" + Bukkit.getPlayer(args[1]).getUniqueId().toString() + ".yml");
             FileConfiguration data2 = YamlConfiguration.loadConfiguration(file2);
             if ((args[0].equalsIgnoreCase("help"))) {
-                if (!(p.hasPermission("relationships.help.friend"))){
+                if (!(p.hasPermission("relationships.help.friend"))) {
                     sender.sendMessage(ChatColor.RED + "You don't have permission for this command!");
+                    return true;
                 }
-                if ((p.hasPermission("relationships.help.friend"))){
-                sender.sendMessage(ChatColor.DARK_AQUA + "Relationships Help -|- Friend\n" + ChatColor.BLUE +
-                        "/friend help - Shows this message\n" +
-                        "/friend add - Sent a request to add someone as a friend\n" +
-                        "/friend remove - Remove a friend from your friend list\n" +
-                        "/friend pending <requests/sent/cancel> - Pending list\n" +
-                        "/friend <accept/decline> Accept or decline a friend request\n" +
-                        "/friend mail - Sends an mail to the player for if he is offline");
-                return true;
+                if ((p.hasPermission("relationships.help.friend"))) {
+                    sender.sendMessage(ChatColor.DARK_AQUA + "Relationships Help -|- Friend\n" + ChatColor.BLUE +
+                            "/friend help - Shows this message\n" +
+                            "/friend add - Sent a request to add someone as a friend\n" +
+                            "/friend remove - Remove a friend from your friend list\n" +
+                            "/friend pending <requests/sent/cancel> - Pending list\n" +
+                            "/friend <accept/decline> Accept or decline a friend request\n" +
+                            "/friend mail - Sends an mail to the player for if he is offline");
+                    return true;
+                }
             }
-            }
-            if (args[0] == null) {
-                sender.sendMessage(ChatColor.BLUE + "This is no command, were you looking for /friend help?");
-                return true;
-            } else if (args[0].equalsIgnoreCase("add")) {
-                if (!(p.hasPermission("relationships.friend.add"))){
+            if (args[0].equalsIgnoreCase("add")) {
+                if (!(p.hasPermission("relationships.friend.add"))) {
                     sender.sendMessage(ChatColor.RED + "You don't have permission for this command!");
+                    return true;
                 }
                 if ((p.hasPermission("relationships.friend.add"))) {
                     if (args.length >= 2) {
@@ -138,13 +137,22 @@ public class RelationshipFriendCommands implements CommandExecutor {
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("accept")){
-                if (!(p.hasPermission("relationships.friend.accept"))){
+            } else if (args[0].equalsIgnoreCase("accept")) {
+                if (!(p.hasPermission("relationships.friend.accept"))) {
                     sender.sendMessage(ChatColor.RED + "You don't have perrmission for this command!");
+                    return true;
                 }
                 if (p.hasPermission("relationships.friend.accept")) {
+                    if (!(data.contains("PendingSent")) && !(data2.contains("PendingRequest"))){
+                        sender.sendMessage(ChatColor.BLUE + "That person has not sent a request to you.\nIf you want to become friends sent a request to him: /friend add.");
+                        return true;
+                    }
                     ArrayList SentList = (ArrayList) data.getList("PendingSent");
                     ArrayList SentList2 = (ArrayList) data2.getList("PendingRequest");
+                    if (!(SentList.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString())) && !(SentList2.contains(((Player) sender).getUniqueId().toString()))){
+                        sender.sendMessage(ChatColor.BLUE + "That person has not sent a request to you.\nIf you want to become friends sent a request. /friend add.");
+                        return true;
+                    }
                     if (SentList.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString()) && SentList2.contains(((Player) sender).getUniqueId().toString())) {
                         if ((data.contains("FriendList"))) {
                             ArrayList FriendList = (ArrayList) data.getList("FriendList");
@@ -181,47 +189,79 @@ public class RelationshipFriendCommands implements CommandExecutor {
                         return true;
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("remove")){
-                if (!(p.hasPermission("relationships.friend.remove"))){
+            } else if (args[0].equalsIgnoreCase("remove")) {
+                if (!(p.hasPermission("relationships.friend.remove"))) {
                     sender.sendMessage(ChatColor.RED + "You don't have permission for this command!");
+                    return true;
                 }
-                if ((p.hasPermission("relationships.friend.remove"))){
+                if ((p.hasPermission("relationships.friend.remove"))) {
 
-                if (data.contains("FriendList") && (data2.contains("FriendList"))) {
-                    ArrayList Friends = (ArrayList) data.getList("FriendList");
-                    ArrayList Friends2 = (ArrayList) data2.getList("FriendList");
-                    if (Friends.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString())) {
-                        Friends.remove(Bukkit.getPlayer(args[1]).getUniqueId().toString());
-                        data.set("FriendList", Friends);
-                    }
-                    if (Friends2.contains(((Player) sender).getUniqueId().toString())) {
-                        Friends.remove(((Player) sender).getUniqueId().toString());
-                        data2.set("FriendList", Friends);
-                    }
-                    else {
+                    if (data.contains("FriendList") && (data2.contains("FriendList"))) {
+                        ArrayList Friends = (ArrayList) data.getList("FriendList");
+                        ArrayList Friends2 = (ArrayList) data2.getList("FriendList");
+                        if (Friends.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString())) {
+                            Friends.remove(Bukkit.getPlayer(args[1]).getUniqueId().toString());
+                            data.set("FriendList", Friends);
+                        }
+                        if (Friends2.contains(((Player) sender).getUniqueId().toString())) {
+                            Friends.remove(((Player) sender).getUniqueId().toString());
+                            data2.set("FriendList", Friends);
+                        } else {
+                            sender.sendMessage(ChatColor.BLUE + "You're not friended with that person.");
+                            return true;
+                        }
+                        try {
+                            data.save(file);
+                            data2.save(file2);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        sender.sendMessage(ChatColor.BLUE + "Removed " + Bukkit.getPlayer(args[1]).getName() + " from your friend's list.");
+                        return true;
+                    } else {
                         sender.sendMessage(ChatColor.BLUE + "You're not friended with that person.");
                         return true;
                     }
-                    try {
-                        data.save(file);
-                        data2.save(file2);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+
+                }
+
+            } else if (args[0].equalsIgnoreCase("decline")) {
+                if (!(p.hasPermission("relationships.friend.decline"))) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission for this command!");
+                    return true;
+                }
+                if (p.hasPermission("relationships.friend.decline")) {
+                    if (!(data.contains("PendingSent")) && !(data2.contains("PendingRequest"))){
+                        sender.sendMessage(ChatColor.BLUE + "That person has not sent a request to you.\nIf you want to become friends sent a request. /friend add.");
+                        return true;
                     }
-                    sender.sendMessage(ChatColor.BLUE + "Removed " + Bukkit.getPlayer(args[1]).getName() + " from your friend's list.");
-                    return true;
+                    ArrayList SentList = (ArrayList) data.getList("PendingSent");
+                    ArrayList SentList2 = (ArrayList) data2.getList("PendingRequest");
+                    if (!(SentList.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString())) && !(SentList2.contains(((Player) sender).getUniqueId().toString()))){
+                        sender.sendMessage(ChatColor.BLUE + "That person has not sent a request to you.\nIf you want to become friends sent a request. /friend add.");
+                        return true;
+                    }
+                    if (SentList.contains(Bukkit.getPlayer(args[1]).getUniqueId().toString()) && SentList2.contains(((Player) sender).getUniqueId().toString())){
+                        SentList.remove(Bukkit.getPlayer(args[1]).getUniqueId().toString());
+                        SentList2.remove(((Player) sender).getUniqueId().toString());
+                        data.set("PendingSent", SentList);
+                        data2.set("PendingRequest", SentList2);
+                        try {
+                            data.save(file);
+                            data2.save(file2);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        sender.sendMessage(ChatColor.BLUE + "Declined friend request from " + args[1] + ".");
+                        return true;
+                    }
                 }
-                else {
-                    sender.sendMessage(ChatColor.BLUE + "You're not friended with that person.");
-                    return true;
-                }
-
-
+            } else if (args[0].equalsIgnoreCase("list")){
+                
             }
-
         }
-        }
-
-        return false;
+    return false;
     }
+
 }
